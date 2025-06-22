@@ -13,6 +13,10 @@ class SimulationConfig:
     # Allowed network range for PLC Modbus communication
     PLC_NETWORK_RANGE = '192.168.0.0/24'
 
+    # If True, HMIs will verify no WiFi interface is active when a wired
+    # connection is up to avoid bridging networks
+    HMI_CHECK_WIFI_BRIDGE = True
+
 
 
 class PHYSICS:
