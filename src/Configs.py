@@ -7,6 +7,9 @@ class SimulationConfig:
     # configurable
     EXECUTION_MODE = EXECUTION_MODE_DOCKER
 
+    # Allowed office network range for external services
+    OFFICE_NETWORK_RANGE = '192.168.1.0/24'
+
 
 
 class PHYSICS:
