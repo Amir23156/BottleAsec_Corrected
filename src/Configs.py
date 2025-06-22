@@ -16,6 +16,9 @@ class SimulationConfig:
     # If True, HMIs will verify no WiFi interface is active when a wired
     # connection is up to avoid bridging networks
     HMI_CHECK_WIFI_BRIDGE = True
+    
+    # Access code required to operate the emergency HMI3 interface
+    HMI3_ACCESS_CODE = 'ChangeMe'
 
 
 
