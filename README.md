@@ -100,3 +100,7 @@ Run the sample project using the running start.py
 cd ICSSIM/src
 python3 start.py
 ```
+
+
+## Corrosive tank monitoring
+The simulation now tracks the tank pH level to detect corrosion. PLC1 closes both valves and logs a critical warning if the pH leaves the configured safe range.

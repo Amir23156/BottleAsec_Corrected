@@ -1,9 +1,22 @@
+import os
 import subprocess
 
 
 def __make_dir_editable(path):
-    bash_command = f'chmod 777 {path}'
-    subprocess.run(bash_command, shell=True, check=True)
+    #bash_command = f'chmod 777 {path}'
+    #subprocess.run(bash_command, shell=True, check=True)
+    """Ensure path exists and is writable without using the shell."""
+    if os.path.isdir(path) or not os.path.splitext(path)[1]:
+        os.makedirs(path, exist_ok=True)
+        os.chmod(path, 0o755)
+    else:
+        parent = os.path.dirname(path)
+        if parent and not os.path.exists(parent):
+            os.makedirs(parent, exist_ok=True)
+            os.chmod(parent, 0o755)
+        if not os.path.exists(path):
+            open(path, 'a').close()
+        os.chmod(path, 0o644)
 
 
 def _do_scan_scapy_attack(log_dir, log_file, target, timeout=10):

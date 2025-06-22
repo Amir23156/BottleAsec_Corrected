@@ -21,6 +21,11 @@ class FactorySimulation(HIL):
             tank_water_amount -= PHYSICS.TANK_OUTPUT_FLOW_RATE * elapsed_time
 
         tank_water_level = tank_water_amount / PHYSICS.TANK_LEVEL_CAPACITY
+        
+        # simple corrosion model - pH drifts down over time
+        tank_ph = self._get(TAG.TAG_TANK_PH_VALUE) - 0.0001 * elapsed_time
+        tank_ph = max(0, min(14, tank_ph))
+
 
         if tank_water_level > PHYSICS.TANK_MAX_LEVEL:
             tank_water_level = PHYSICS.TANK_MAX_LEVEL
@@ -57,6 +62,7 @@ class FactorySimulation(HIL):
 
         # update physical properties
         self._set(TAG.TAG_TANK_LEVEL_VALUE, tank_water_level)
+        self._set(TAG.TAG_TANK_PH_VALUE, tank_ph)
         self._set(TAG.TAG_TANK_OUTPUT_FLOW_VALUE, tank_water_flow)
         self._set(TAG.TAG_BOTTLE_LEVEL_VALUE, bottle_water_level)
         self._set(TAG.TAG_BOTTLE_DISTANCE_TO_FILLER_VALUE, bottle_distance_to_filler)
