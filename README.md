@@ -106,3 +106,6 @@ The simulation now tracks the tank pH level to detect corrosion. PLC1 closes bot
 
 ## Office network restrictions
 Memcached connections are now validated to ensure the configured host lies inside the office network range defined in `Configs.py`.
+
+## PLC network restrictions
+Modbus servers and clients now verify that PLC IP addresses fall within the `PLC_NETWORK_RANGE` defined in `Configs.py`. This mitigates unauthorized Modbus connections between PLC1 and PLC2.
