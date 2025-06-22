@@ -6,6 +6,16 @@ class SimulationConfig:
 
     # configurable
     EXECUTION_MODE = EXECUTION_MODE_DOCKER
+    
+    # Allowed office network range for external services
+    OFFICE_NETWORK_RANGE = '192.168.1.0/24'
+    
+    # Allowed network range for PLC Modbus communication
+    PLC_NETWORK_RANGE = '192.168.0.0/24'
+    
+    # If True, HMIs will verify no WiFi interface is active when a wired
+    # connection is up to avoid bridging networks
+    HMI_CHECK_WIFI_BRIDGE = True
 
 
 

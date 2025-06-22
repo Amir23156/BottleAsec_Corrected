@@ -3,6 +3,7 @@ import sqlite3
 import memcache
 from abc import abstractmethod, ABC
 from os.path import splitext
+from ipaddress import ip_address, ip_network
 
 from pyModbusTCP.client import ModbusClient
 
@@ -10,6 +11,14 @@ from ics_sim.helper import debug, error, validate_type
 import json
 
 from ics_sim.protocol import ClientModbus
+from Configs import SimulationConfig
+
+ALLOWED_OFFICE_NET = ip_network(SimulationConfig.OFFICE_NETWORK_RANGE)
+
+
+def _validate_office_host(host):
+    if ip_address(host) not in ALLOWED_OFFICE_NET:
+        raise ValueError(f"Host {host} outside allowed office network range")
 
 
 class Connector(ABC):
@@ -102,6 +111,8 @@ class MemcacheConnector(Connector):
         Connector.__init__(self, connection)
         self._key = 'name'
         self._value = 'value'
+        host = self._path.split(':')[0]
+        _validate_office_host(host)
         self.memcached_client = memcache.Client([self._path], debug=0)
 
 

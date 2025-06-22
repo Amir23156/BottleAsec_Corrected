@@ -1,6 +1,16 @@
 from pyModbusTCP.client import ModbusClient
 from pyModbusTCP.server import ModbusServer, DataBank
+from ipaddress import ip_address, ip_network
 
+
+from Configs import SimulationConfig
+
+ALLOWED_PLC_NET = ip_network(SimulationConfig.PLC_NETWORK_RANGE)
+
+
+def _validate_plc_host(ip):
+    if ip_address(ip) not in ALLOWED_PLC_NET:
+        raise ValueError(f"PLC host {ip} outside allowed network range")
 
 class Client:
     def __init__(self, ip, port):
@@ -126,6 +136,7 @@ class ProtocolFactory:
     @staticmethod
     def create_client(protocol, ip, port):
         if protocol == 'ModbusWriteRequest-TCP':
+            _validate_plc_host(ip)
             return ClientModbus(ip, port)
         else:
             raise TypeError()
@@ -133,6 +144,7 @@ class ProtocolFactory:
     @staticmethod
     def create_server(protocol, ip, port):
         if protocol == 'ModbusWriteRequest-TCP':
+            _validate_plc_host(ip)
             return ServerModbus(ip, port)
         else:
             raise TypeError()

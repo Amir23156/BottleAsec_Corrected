@@ -14,6 +14,7 @@ from ics_sim.connectors import ConnectorFactory
 
 from multiprocessing import Process
 import logging
+from Configs import SimulationConfig
 
 
 class Physics(ABC):
@@ -420,7 +421,33 @@ class HMI(DcsComponent):
 
     def _before_start(self):
         DcsComponent._before_start(self)
+        if SimulationConfig.HMI_CHECK_WIFI_BRIDGE:
+            self.__enforce_single_network()
         self._set_clear_scr(True)
+    
+    def __enforce_single_network(self):
+        """Raise an error if both WiFi and wired interfaces are active."""
+        try:
+            interfaces = os.listdir('/sys/class/net')
+        except Exception:
+            return
+        wifi_up = False
+        wired_up = False
+        for iface in interfaces:
+            try:
+                with open(f'/sys/class/net/{iface}/operstate') as f:
+                    state = f.read().strip()
+            except Exception:
+                continue
+            if state != 'up':
+                continue
+            if iface.startswith('wl') or 'wlan' in iface:
+                wifi_up = True
+            elif iface.startswith('en') or iface.startswith('eth'):
+                wired_up = True
+        if wifi_up and wired_up:
+            raise RuntimeError('WiFi and Ethernet interfaces active simultaneously')
+
 
     def _logic(self):
         self._display()
