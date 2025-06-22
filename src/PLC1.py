@@ -19,6 +19,13 @@ class PLC1(PLC):
             elif tank_level < self._get(TAG.TAG_TANK_LEVEL_MIN):
                 self._set(TAG.TAG_TANK_INPUT_VALVE_STATUS, 1)
 
+        # Check for corrosive conditions
+        ph_value = self._get(TAG.TAG_TANK_PH_VALUE)
+        if ph_value < self._get(TAG.TAG_TANK_PH_MIN) or ph_value > self._get(TAG.TAG_TANK_PH_MAX):
+            self.report('Corrosive risk detected - shutting valves', logging.CRITICAL)
+            self._set(TAG.TAG_TANK_INPUT_VALVE_STATUS, 0)
+            self._set(TAG.TAG_TANK_OUTPUT_VALVE_STATUS, 0)
+
         #  update TAG.TAG_TANK_OUTPUT_VALVE_STATUS
         if not self._check_manual_input(TAG.TAG_TANK_OUTPUT_VALVE_MODE, TAG.TAG_TANK_OUTPUT_VALVE_STATUS):
             bottle_level = self._get(TAG.TAG_BOTTLE_LEVEL_VALUE)

@@ -35,6 +35,11 @@ class TAG:
 
     TAG_TANK_OUTPUT_FLOW_VALUE = 'tank_output_flow_value'
 
+    # Tags for monitoring the pH level of the tank to detect corrosion
+    TAG_TANK_PH_VALUE = 'tank_ph_value'
+    TAG_TANK_PH_MIN = 'tank_ph_min'
+    TAG_TANK_PH_MAX = 'tank_ph_max'
+
     TAG_CONVEYOR_BELT_ENGINE_STATUS= 'conveyor_belt_engine_status'
     TAG_CONVEYOR_BELT_ENGINE_MODE = 'conveyor_belt_engine_mode'
 
@@ -65,6 +70,11 @@ class TAG:
         TAG_BOTTLE_LEVEL_MAX:                   {'id': 11, 'plc': 2, 'type': 'output', 'fault': 0.0, 'default': 1.8},
 
         TAG_BOTTLE_DISTANCE_TO_FILLER_VALUE:    {'id': 12, 'plc': 2, 'type': 'input', 'fault': 0.0, 'default': 0},
+
+        # pH monitoring to detect corrosion
+        TAG_TANK_PH_VALUE:                     {'id': 13, 'plc': 1, 'type': 'input', 'fault': 0.0, 'default': 7.0},
+        TAG_TANK_PH_MIN:                       {'id': 14, 'plc': 1, 'type': 'output', 'fault': 0.0, 'default': 5.0},
+        TAG_TANK_PH_MAX:                       {'id': 15, 'plc': 1, 'type': 'output', 'fault': 0.0, 'default': 9.0},
     }
 
 
