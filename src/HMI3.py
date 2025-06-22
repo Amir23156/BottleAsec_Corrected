@@ -5,7 +5,7 @@ import time
 import random
 
 from ics_sim.Device import HMI
-from Configs import TAG, Controllers
+from Configs import TAG, Controllers, SimulationConfig
 
 
 class HMI3(HMI):
@@ -15,16 +15,23 @@ class HMI3(HMI):
 
     def _before_start(self):
         HMI._before_start(self)
-
+        attempts = 0
         while True:
-            response = input("Do you want to start auto manipulation of factory setting? \n")
-            response = response.lower()
-            if response == 'y' or response == 'yes':
-                self._set_clear_scr(False)
-                self.random_values = [["TANK LEVEL MIN" , 1 , 4.5] ,["TANK LEVEL MAX" , 5.5 , 9],["BOTTLE LEVEL MAX" , 1 , 1.9]]
-                break
-            else:
+            response = input("Do you want to start auto manipulation of factory setting? \n").lower()
+            if response not in ('y', 'yes'):
                 continue
+            code = os.getenv('HMI3_CODE') or input('Enter HMI3 access code: ')
+            if code != SimulationConfig.HMI3_ACCESS_CODE:
+                self.report('Invalid HMI3 access code', logging.ERROR)
+                attempts += 1
+                if attempts >= 3:
+                    raise RuntimeError('Maximum authentication attempts reached')
+                continue
+            self._set_clear_scr(False)
+            self.random_values = [["TANK LEVEL MIN" , 1 , 4.5],
+                                  ["TANK LEVEL MAX" , 5.5 , 9],
+                                  ["BOTTLE LEVEL MAX" , 1 , 1.9]]
+            break
 
     def _display(self):
         n = random.randint(5, 20)

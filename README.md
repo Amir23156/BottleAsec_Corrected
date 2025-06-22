@@ -112,3 +112,6 @@ Modbus servers and clients now verify that PLC IP addresses fall within the `PLC
 
 ## HMI WiFi bridging protection
 HMIs now check at startup that no WiFi interface is active while a wired connection is up. If both are detected, the application aborts to prevent bridging between networks. This behaviour can be configured with `HMI_CHECK_WIFI_BRIDGE` in `SimulationConfig`.
+
+## HMI3 emergency access control
+The backup HMI3 interface now requires an access code before starting automated manipulations. Configure the expected code with `HMI3_ACCESS_CODE` in `SimulationConfig` or supply it via the `HMI3_CODE` environment variable when launching the application.
