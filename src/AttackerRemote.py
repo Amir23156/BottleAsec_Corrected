@@ -87,9 +87,9 @@ class AttackerRemote(AttackerBase):
         connection_params['topic'] = connection_params['topic'] + '/#'
 
         if connection_params.keys().__contains__('username') and connection_params.keys().__contains__('password'):
-            print('password')
             username = connection_params['username']
             password = connection_params['password']
+            # avoid printing password information to the console
             self.client.username_pw_set(username, password)
 
         # Set up callback functions
