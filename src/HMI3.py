@@ -14,26 +14,43 @@ class HMI3(HMI):
         super().__init__('HMI3', TAG.TAG_LIST, Controllers.PLCs)
 
 
-    def _before_start(self):
-        HMI._before_start(self)
+def _before_start(self):
+    HMI._before_start(self)
 
-        attempts = 0
-        while True:
-            response = input("Do you want to start auto manipulation of factory setting? \n").lower()
-            if response not in ('y', 'yes'):
-                continue
-            code = os.getenv('HMI3_CODE') or input('Enter HMI3 access code: ')
-            if code != SimulationConfig.HMI3_ACCESS_CODE:
-                self.report('Invalid HMI3 access code', logging.ERROR)
-                attempts += 1
-                if attempts >= 3:
-                    raise RuntimeError('Maximum authentication attempts reached')
-                continue
-            self._set_clear_scr(False)
-            self.random_values = [["TANK LEVEL MIN" , 1 , 4.5],
-                                  ["TANK LEVEL MAX" , 5.5 , 9],
-                                  ["BOTTLE LEVEL MAX" , 1 , 1.9]]
-            break
+    # --- Detect network interface fallback ---
+    interfaces = os.listdir('/sys/class/net')
+    if 'eth0' not in interfaces and 'wlan0' in interfaces:
+        self.report("RJ45 (eth0) not available – switching to WiFi (wlan0)", logging.WARNING)
+        self._send(TAG.TAG_HMI3_NETWORK_FALLBACK, 1)
+    elif 'eth0' in interfaces:
+        self.report("Connected via RJ45 (eth0)", logging.INFO)
+        self._send(TAG.TAG_HMI3_NETWORK_FALLBACK, 1)
+    elif 'wlan0' in interfaces:
+        self.report("Only WiFi (wlan0) available", logging.WARNING)
+        self._send(TAG.TAG_HMI3_NETWORK_FALLBACK, 1)
+    else:
+        self.report("No known network interfaces found", logging.ERROR)
+        self._send(TAG.TAG_HMI3_NETWORK_FALLBACK, 0)
+
+    # --- Authenticated access setup ---
+    attempts = 0
+    while True:
+        response = input("Do you want to start auto manipulation of factory setting? \n").lower()
+        if response not in ('y', 'yes'):
+            continue
+        code = os.getenv('HMI3_CODE') or input('Enter HMI3 access code: ')
+        if code != SimulationConfig.HMI3_ACCESS_CODE:
+            self.report('Invalid HMI3 access code', logging.ERROR)
+            attempts += 1
+            if attempts >= 3:
+                raise RuntimeError('Maximum authentication attempts reached')
+            continue
+        self._set_clear_scr(False)
+        self.random_values = [["TANK LEVEL MIN" , 1 , 4.5],
+                              ["TANK LEVEL MAX" , 5.5 , 9],
+                              ["BOTTLE LEVEL MAX" , 1 , 1.9]]
+        break
+
 
     def _display(self):
         n = random.randint(5, 20)
